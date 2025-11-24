@@ -1,6 +1,6 @@
 package guru.springframework;
 
-public class Money {
+public class Money implements Expression {
 
     public static Money dollar(int amount) {
         return new Money(amount, "USD");
@@ -23,6 +23,10 @@ public class Money {
 
     public String currency() {
         return currency;
+    }
+
+    public Expression plus(Money addend) {
+        return new Money(amount + addend.amount, currency);
     }
 
     @Override
