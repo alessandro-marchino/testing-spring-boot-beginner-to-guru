@@ -3,10 +3,10 @@ package guru.springframework;
 public class Money {
 
     public static Money dollar(int amount) {
-        return new Dollar(amount, "USD");
+        return new Money(amount, "USD");
     }
     public static Money franc(int amount) {
-        return new Franc(amount, "CHF");
+        return new Money(amount, "CHF");
     }
 
     protected String currency;
