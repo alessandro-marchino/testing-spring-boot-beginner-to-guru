@@ -1,6 +1,7 @@
 package guru.springframework;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,31 @@ class MoneyTest {
     void testCurrency() {
         assertEquals("USD", Money.dollar(1).currency());
         assertEquals("CHF", Money.franc(1).currency());
+    }
+
+    @Test
+    void testPlusReturnsSum() {
+        Money five = Money.dollar(5);
+        Expression result = five.plus(five);
+        assertInstanceOf(Sum.class, result);
+        Sum sum = (Sum)result;
+        assertEquals(five, sum.augend);
+        assertEquals(five, sum.addend);
+    }
+
+    @Test
+    void testReduceSum() {
+        Expression sum = new Sum(Money.dollar(3), Money.dollar(4));
+        Bank bank = new Bank();
+        Money result = bank.reduce(sum, "USD");
+        assertEquals(Money.dollar(7), result);
+    }
+
+    @Test
+    void testReduceMoney() {
+        Bank bank = new Bank();
+        Money result = bank.reduce(Money.dollar(1), "USD");
+        assertEquals(Money.dollar(1), result);
     }
 
     @Test
