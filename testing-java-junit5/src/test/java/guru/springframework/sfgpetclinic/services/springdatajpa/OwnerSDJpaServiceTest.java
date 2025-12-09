@@ -1,5 +1,7 @@
 package guru.springframework.sfgpetclinic.services.springdatajpa;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,7 @@ class OwnerSDJpaServiceTest {
     @Disabled
     void testFindByLastName() {
         Owner owner = service.findByLastName("Buck");
+        assertNotNull(owner);
     }
 
     @Test
