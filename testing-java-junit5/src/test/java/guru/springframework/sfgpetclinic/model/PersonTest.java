@@ -3,9 +3,11 @@ package guru.springframework.sfgpetclinic.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-public class PersonTest {
+@Tag("model")
+class PersonTest {
     @Test
     void groupedAssertions() {
         Person person = new Person(1L, "Joe", "Buck");
