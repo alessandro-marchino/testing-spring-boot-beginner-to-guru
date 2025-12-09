@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.time.Duration;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +34,9 @@ class IndexControllerTest {
         assertEquals("index", controller.index());
         assertEquals("index", controller.index(), "Wrong view returned");
         assertEquals("index", controller.index(), () -> "Another expensive message - Make me only if you need to");
+
+        Assertions.assertThat(controller.index())
+            .isEqualTo("index");
     }
 
     @Test
