@@ -7,6 +7,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import guru.springframework.ModelTests;
 
@@ -29,5 +31,11 @@ class OwnerTest implements ModelTests {
         );
 
         assertThat(owner.getCity(), is("Key West"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "Spring", "Framework", "Guru" })
+    void testValueSource(String val) {
+        System.out.println(val);
     }
 }
