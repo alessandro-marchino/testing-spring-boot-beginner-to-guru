@@ -3,15 +3,14 @@ package guru.springframework.sfgpetclinic.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Tag;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
-@Tag("model")
-class OwnerTest {
+import guru.springframework.ModelTests;
+
+class OwnerTest implements ModelTests {
     @Test
     void dependentAssertions() {
         Owner owner = new Owner(1L, "Joe", "Buck");

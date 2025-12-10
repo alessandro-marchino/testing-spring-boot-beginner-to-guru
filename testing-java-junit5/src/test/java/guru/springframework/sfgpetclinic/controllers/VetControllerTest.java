@@ -7,6 +7,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import guru.springframework.sfgpetclinic.ControllerTests;
 import guru.springframework.sfgpetclinic.fauxspring.Model;
 import guru.springframework.sfgpetclinic.fauxspring.ModelMapImpl;
 import guru.springframework.sfgpetclinic.model.Vet;
@@ -15,7 +16,7 @@ import guru.springframework.sfgpetclinic.services.VetService;
 import guru.springframework.sfgpetclinic.services.map.SpecialityMapService;
 import guru.springframework.sfgpetclinic.services.map.VetMapService;
 
-class VetControllerTest {
+class VetControllerTest implements ControllerTests {
     private SpecialtyService specialtyService;
     private VetService service;
     private Model model;
