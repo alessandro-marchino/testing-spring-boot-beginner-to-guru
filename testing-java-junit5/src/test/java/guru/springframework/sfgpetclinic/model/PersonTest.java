@@ -10,7 +10,7 @@ import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 
-import guru.springframework.ModelTests;
+import guru.springframework.sfgpetclinic.ModelTests;
 import guru.springframework.sfgpetclinic.RepeatedTests;
 
 class PersonTest implements ModelTests {
