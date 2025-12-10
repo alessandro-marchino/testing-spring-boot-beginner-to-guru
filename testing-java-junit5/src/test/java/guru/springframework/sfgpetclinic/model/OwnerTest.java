@@ -3,6 +3,8 @@ package guru.springframework.sfgpetclinic.model;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.DisplayName;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -33,7 +35,8 @@ class OwnerTest implements ModelTests {
         assertThat(owner.getCity(), is("Key West"));
     }
 
-    @ParameterizedTest
+    @DisplayName("Value Source Test")
+    @ParameterizedTest(name = "{displayName} - [{index}] {arguments}")
     @ValueSource(strings = { "Spring", "Framework", "Guru" })
     void testValueSource(String val) {
         System.out.println(val);
