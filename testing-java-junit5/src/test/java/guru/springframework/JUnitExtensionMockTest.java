@@ -2,20 +2,16 @@ package guru.springframework;
 
 import java.util.Map;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-class AnnotationMockTest {
+@ExtendWith(MockitoExtension.class)
+class JUnitExtensionMockTest {
 
     @Mock
     Map<String, Object> mock;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void testMock() {
