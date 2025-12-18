@@ -68,6 +68,7 @@ class OwnerControllerTest {
             // Then
             assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%Buck%");
             assertThat(viewName).isEqualTo("redirect:/owners/1");
+            then(model).shouldHaveNoInteractions();
         }
     
         @Test
@@ -81,6 +82,7 @@ class OwnerControllerTest {
             assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%DontFindMe%");
             assertThat(viewName).isEqualTo("owners/findOwners");
             then(bindingResult).should().rejectValue("lastName", "notFound", "not found");
+            then(model).shouldHaveNoInteractions();
         }
     
         @Test
@@ -107,6 +109,7 @@ class OwnerControllerTest {
             assertThrows(RuntimeException.class, () -> controller.processFindForm(owner, bindingResult, null));
             // Then
             assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%Doe%");
+            then(model).shouldHaveNoInteractions();
         }
     }
 
