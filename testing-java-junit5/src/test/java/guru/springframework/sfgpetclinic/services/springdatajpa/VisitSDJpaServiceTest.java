@@ -2,8 +2,8 @@ package guru.springframework.sfgpetclinic.services.springdatajpa;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,58 +27,76 @@ class VisitSDJpaServiceTest {
 
     @Test
     void testDelete() {
+        // Given
+        // When
         service.delete(new Visit());
-        verify(visitRepository).delete(any(Visit.class));
+        // Then
+        then(visitRepository).should().delete(any(Visit.class));
     }
 
     @Test
     void testDeleteById() {
+        // Given
+        // When
         service.deleteById(1L);
-        verify(visitRepository).deleteById(1L);
+        // Then
+        then(visitRepository).should().deleteById(1L);
     }
 
     @Test
     void testFindAll() {
-        when(visitRepository.findAll()).thenReturn(List.of(
+        // Given
+        given(visitRepository.findAll()).willReturn(List.of(
             new Visit(1L),
             new Visit(2L)
         ));
+        // When
         Set<Visit> result = service.findAll();
+        // Then
         assertThat(result)
             .isNotNull()
             .isNotEmpty()
             .hasSize(2);
-        verify(visitRepository).findAll();
+        then(visitRepository).should().findAll();
     }
 
     @Test
     void testFindById() {
+        // Given
         Visit visit = new Visit(1L);
-        when(visitRepository.findById(1L)).thenReturn(Optional.of(visit));
+        given(visitRepository.findById(1L)).willReturn(Optional.of(visit));
+        // When
         Visit result = service.findById(1L);
+        // Then
         assertThat(result)
             .isNotNull()
             .isEqualTo(visit);
-        verify(visitRepository).findById(1L);
+        then(visitRepository).should().findById(1L);
     }
 
     @Test
     void testFindByIdNotFound() {
-        when(visitRepository.findById(1L)).thenReturn(Optional.empty());
+        // Given
+        given(visitRepository.findById(1L)).willReturn(Optional.empty());
+        // When
         Visit result = service.findById(1L);
+        // Then
         assertThat(result)
             .isNull();
-        verify(visitRepository).findById(1L);
+        then(visitRepository).should().findById(1L);
     }
 
     @Test
     void testSave() {
+        // Given
         Visit visit = new Visit(1L);
-        when(visitRepository.save(any(Visit.class))).thenReturn(visit);
+        given(visitRepository.save(any(Visit.class))).willReturn(visit);
+        // When
         Visit result = service.save(visit);
+        // Then
         assertThat(result)
             .isNotNull()
             .isEqualTo(visit);
-        verify(visitRepository).save(visit);
+        then(visitRepository).should().save(visit);
     }
 }
