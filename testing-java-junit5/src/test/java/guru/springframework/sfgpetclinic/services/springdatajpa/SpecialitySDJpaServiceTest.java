@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
@@ -87,7 +88,8 @@ class SpecialitySDJpaServiceTest {
         assertThat(foundSpeciality)
             .isNotNull()
             .isEqualTo(speciality);
-        verify(specialtyRepository).findById(1L);
+        then(specialtyRepository).should().findById(1L);
+        then(specialtyRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test
