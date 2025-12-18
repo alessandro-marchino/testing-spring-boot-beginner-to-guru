@@ -1,6 +1,7 @@
 package guru.springframework.sfgpetclinic.services.springdatajpa;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.doThrow;
@@ -15,12 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Optional;
 
-import javax.management.RuntimeErrorException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mock.Strictness;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import guru.springframework.sfgpetclinic.model.Speciality;
@@ -29,7 +29,7 @@ import guru.springframework.sfgpetclinic.repositories.SpecialtyRepository;
 @ExtendWith(MockitoExtension.class)
 class SpecialitySDJpaServiceTest {
 
-    @Mock
+    @Mock(strictness = Strictness.LENIENT)
     SpecialtyRepository specialtyRepository;
     @InjectMocks
     SpecialitySDJpaService service;
@@ -135,5 +135,35 @@ class SpecialitySDJpaServiceTest {
         assertThrows(RuntimeException.class, () -> service.delete(new Speciality()));
         // Then
         then(specialtyRepository).should().delete(any(Speciality.class));
+    }
+
+    @Test
+    void testSaveLambda() {
+        // Given
+        final String MATCH_ME = "MATCH_ME";
+        Speciality speciality = new Speciality(MATCH_ME);
+
+        Speciality savedSpeciality = new Speciality(1L, null);
+        given(specialtyRepository.save(argThat(arg -> MATCH_ME.equals(arg.getDescription())))).willReturn(savedSpeciality);
+
+        // When
+        Speciality returnedSpeciality = service.save(speciality);
+        // Then
+        assertThat(returnedSpeciality.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void testSaveLambdaNoMatch() {
+        // Given
+        final String MATCH_ME = "MATCH_ME";
+        Speciality speciality = new Speciality("Not a match");
+
+        Speciality savedSpeciality = new Speciality(1L, null);
+        given(specialtyRepository.save(argThat(arg -> MATCH_ME.equals(arg.getDescription())))).willReturn(savedSpeciality);
+
+        // When
+        Speciality returnedSpeciality = service.save(speciality);
+        // Then
+        assertThat(returnedSpeciality).isNull();
     }
 }
