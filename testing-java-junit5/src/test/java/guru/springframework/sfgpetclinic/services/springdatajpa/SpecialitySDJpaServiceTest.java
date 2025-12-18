@@ -1,5 +1,6 @@
 package guru.springframework.sfgpetclinic.services.springdatajpa;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.never;
@@ -71,5 +72,13 @@ class SpecialitySDJpaServiceTest {
             .isNotNull()
             .isEqualTo(speciality);
         verify(specialtyRepository).findById(1L);
+    }
+
+    @Test
+    void deleteByObject() {
+        Speciality speciality = new Speciality();
+        service.delete(speciality);
+
+        verify(specialtyRepository).delete(any(Speciality.class));
     }
 }
