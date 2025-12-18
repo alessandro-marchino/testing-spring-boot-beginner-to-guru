@@ -5,6 +5,10 @@ import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,5 +59,17 @@ class SpecialitySDJpaServiceTest {
     @Test
     void delete() {
         service.delete(new Speciality());
+    }
+
+    @Test
+    void findByIdTest() {
+        Speciality speciality = new Speciality();
+        when(specialtyRepository.findById(1L)).thenReturn(Optional.of(speciality));
+
+        Speciality foundSpeciality = service.findById(1L);
+        assertThat(foundSpeciality)
+            .isNotNull()
+            .isEqualTo(speciality);
+        verify(specialtyRepository).findById(1L);
     }
 }
