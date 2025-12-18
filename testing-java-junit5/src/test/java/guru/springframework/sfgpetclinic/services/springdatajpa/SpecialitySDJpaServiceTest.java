@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
@@ -68,6 +69,21 @@ class SpecialitySDJpaServiceTest {
         when(specialtyRepository.findById(1L)).thenReturn(Optional.of(speciality));
 
         Speciality foundSpeciality = service.findById(1L);
+        assertThat(foundSpeciality)
+            .isNotNull()
+            .isEqualTo(speciality);
+        verify(specialtyRepository).findById(1L);
+    }
+
+    @Test
+    void findByIdBddTest() {
+        // Given
+        Speciality speciality = new Speciality(1L, "Test");
+        given(specialtyRepository.findById(1L))
+            .willReturn(Optional.of(speciality));
+        // When
+        Speciality foundSpeciality = service.findById(1L);
+        // Then
         assertThat(foundSpeciality)
             .isNotNull()
             .isEqualTo(speciality);
