@@ -3,13 +3,19 @@ package guru.springframework.sfgpetclinic.services.springdatajpa;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Optional;
+
+import javax.management.RuntimeErrorException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -100,6 +106,33 @@ class SpecialitySDJpaServiceTest {
         // When
         Speciality speciality = new Speciality();
         service.delete(speciality);
+        // Then
+        then(specialtyRepository).should().delete(any(Speciality.class));
+    }
+
+    @Test
+    void testDoThrow() {
+        doThrow(new RuntimeException("Boom")).when(specialtyRepository).delete(any(Speciality.class));
+        assertThrows(RuntimeException.class, () -> service.delete(new Speciality()));
+        verify(specialtyRepository).delete(any(Speciality.class));
+    }
+
+    @Test
+    void findByIdThrows() {
+        // Given
+        given(specialtyRepository.findById(1L)).willThrow(new RuntimeException("Boom"));
+        // When
+        assertThrows(RuntimeException.class, () -> service.findById(1L));
+        // Then
+        then(specialtyRepository).should().findById(1L);
+    }
+
+    @Test
+    void testDeleteBDD() {
+        // Given
+        willThrow(new RuntimeException("Boom")).given(specialtyRepository).delete(any(Speciality.class));
+        // When
+        assertThrows(RuntimeException.class, () -> service.delete(new Speciality()));
         // Then
         then(specialtyRepository).should().delete(any(Speciality.class));
     }
