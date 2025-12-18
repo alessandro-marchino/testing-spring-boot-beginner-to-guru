@@ -1,21 +1,26 @@
 package guru.springframework.sfgpetclinic.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import guru.springframework.sfgpetclinic.fauxspring.BindingResult;
+import guru.springframework.sfgpetclinic.fauxspring.Model;
 import guru.springframework.sfgpetclinic.model.Owner;
 import guru.springframework.sfgpetclinic.services.OwnerService;
 
@@ -33,35 +38,67 @@ class OwnerControllerTest {
     @Captor
     ArgumentCaptor<String> stringArgumentCaptor;
 
-    @Test
-    void processFindFormWildcardString() {
-        // Given
-        Owner owner = new Owner(null, "Joe", "Buck");
-        List<Owner> ownerList = List.of();
-        final ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        given(ownerService.findAllByLastNameLike(captor.capture())).willReturn(ownerList);
+    @Nested
+    class ProcessFindFormTest {
 
-        // When
-        String viewName = controller.processFindForm(owner, bindingResult, null);
-        // Then
-        assertThat(captor.getValue()).isEqualToIgnoringCase("%Buck%");
-        assertThat(viewName).isEqualTo("owners/findOwners");
-        then(bindingResult).should().rejectValue("lastName", "notFound", "not found");
-    }
-
-    @Test
-    void processFindFormWildcardStringAnnotation() {
-        // Given
-        Owner owner = new Owner(null, "Joe", "Buck");
-        List<Owner> ownerList = List.of();
-        given(ownerService.findAllByLastNameLike(stringArgumentCaptor.capture())).willReturn(ownerList);
-
-        // When
-        String viewName = controller.processFindForm(owner, bindingResult, null);
-        // Then
-        assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%Buck%");
-        assertThat(viewName).isEqualTo("owners/findOwners");
-        then(bindingResult).should().rejectValue("lastName", "notFound", "not found");
+        @BeforeEach
+        void setUp() {
+            given(ownerService.findAllByLastNameLike(stringArgumentCaptor.capture()))
+                .willAnswer(invocation -> switch((String)invocation.getArgument(0)) {
+                    case "%Buck%" -> List.of(new Owner(1L, "Joe", "Buck"));
+                    case "%DontFindMe%" -> List.of();
+                    case "%FindMe%" -> List.of(new Owner(1L, "Joe", "Buck"), new Owner(2L, "Jane", "Doe"));
+                    default -> throw new RuntimeException("Invalid Argument");
+                });
+        }
+    
+        @Test
+        void processFindFormWildcardStringAnnotation() {
+            // Given
+            Owner owner = new Owner(null, "Joe", "Buck");
+    
+            // When
+            String viewName = controller.processFindForm(owner, bindingResult, null);
+            // Then
+            assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%Buck%");
+            assertThat(viewName).isEqualTo("redirect:/owners/1");
+        }
+    
+        @Test
+        void processFindFormWildcardStringNotFound() {
+            // Given
+            Owner owner = new Owner(null, "Joe", "DontFindMe");
+    
+            // When
+            String viewName = controller.processFindForm(owner, bindingResult, null);
+            // Then
+            assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%DontFindMe%");
+            assertThat(viewName).isEqualTo("owners/findOwners");
+            then(bindingResult).should().rejectValue("lastName", "notFound", "not found");
+        }
+    
+        @Test
+        void processFindFormWildcardStringMultiple() {
+            // Given
+            Owner owner = new Owner(null, "Jane", "FindMe");
+    
+            // When
+            String viewName = controller.processFindForm(owner, bindingResult, Mockito.mock(Model.class));
+            // Then
+            assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%FindMe%");
+            assertThat(viewName).isEqualTo("owners/ownersList");
+        }
+    
+        @Test
+        void processFindFormWildcardStringHasErrors() {
+            // Given
+            Owner owner = new Owner(null, "Jane", "Doe");
+    
+            // When
+            assertThrows(RuntimeException.class, () -> controller.processFindForm(owner, bindingResult, null));
+            // Then
+            assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%Doe%");
+        }
     }
 
     @Test
