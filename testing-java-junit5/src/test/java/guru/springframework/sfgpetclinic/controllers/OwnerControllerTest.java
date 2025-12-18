@@ -3,8 +3,11 @@ package guru.springframework.sfgpetclinic.controllers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.inOrder;
 
 import java.util.List;
 
@@ -14,9 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import guru.springframework.sfgpetclinic.fauxspring.BindingResult;
@@ -35,11 +38,14 @@ class OwnerControllerTest {
     BindingResult bindingResult;
     @InjectMocks
     OwnerController controller;
-    @Captor
-    ArgumentCaptor<String> stringArgumentCaptor;
 
     @Nested
+    @ExtendWith(MockitoExtension.class)
     class ProcessFindFormTest {
+        @Captor
+        ArgumentCaptor<String> stringArgumentCaptor;
+        @Mock
+        Model model;
 
         @BeforeEach
         void setUp() {
@@ -81,12 +87,15 @@ class OwnerControllerTest {
         void processFindFormWildcardStringMultiple() {
             // Given
             Owner owner = new Owner(null, "Jane", "FindMe");
+            InOrder inOrder = inOrder(ownerService, model);
     
             // When
-            String viewName = controller.processFindForm(owner, bindingResult, Mockito.mock(Model.class));
+            String viewName = controller.processFindForm(owner, bindingResult, model);
             // Then
             assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("%FindMe%");
             assertThat(viewName).isEqualTo("owners/ownersList");
+            inOrder.verify(ownerService).findAllByLastNameLike(anyString());
+            inOrder.verify(model).addAttribute(anyString(), anyList());
         }
     
         @Test
