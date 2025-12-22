@@ -1,10 +1,12 @@
 package org.springframework.samples.petclinic.web;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -116,5 +118,21 @@ class OwnerControllerTest {
             .andExpect(model().attributeExists("selections"))
             .andExpect(view().name("owners/ownersList"));
         assertThat(stringArgumentCaptor.getValue()).isEqualToIgnoringCase("");
+    }
+
+    @Test
+    void newOwnerPostValid() throws Exception {
+        // Given
+        // When
+        mockMvc.perform(post("/owners/new")
+            .param("firstName", "Jimmy")
+            .param("lastName", "Buffer")
+            .param("address", "123 Duval St.")
+            .param("city", "Key West")
+            .param("telephone", "1234567890")
+        )
+        // Then
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/owners/null"));
     }
 }
