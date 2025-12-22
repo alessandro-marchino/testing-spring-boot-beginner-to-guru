@@ -3,11 +3,14 @@ package org.springframework.samples.petclinic.web;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.samples.petclinic.model.Vet;
 import org.springframework.samples.petclinic.model.Vets;
 import org.springframework.samples.petclinic.service.ClinicService;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ExtendWith(MockitoExtension.class)
 public class VetControllerTest {
@@ -23,6 +28,27 @@ public class VetControllerTest {
     ClinicService clinicService;
     @InjectMocks
     VetController controller;
+
+    MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(controller)
+            .build();
+    }
+
+    @Test
+    void showVetListMvc() throws Exception {
+        // Given
+        when(clinicService.findVets()).thenReturn(List.of(new Vet(), new Vet()));
+        // When
+        mockMvc.perform(get("/vets.html"))
+        // Then
+            .andExpect(status().isOk())
+            .andExpect(model().attributeExists("vets"))
+            .andExpect(view().name("vets/vetList"));
+    }
 
     @Test
     void showResourcesVetList() {
