@@ -135,4 +135,21 @@ class OwnerControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/owners/null"));
     }
+
+    @Test
+    void newOwnerPostNotValid() throws Exception {
+        // Given
+        // When
+        mockMvc.perform(post("/owners/new")
+            .param("firstName", "Jimmy")
+            .param("lastName", "Buffer")
+            .param("city", "Key West")
+        )
+        // Then
+            .andExpect(status().isOk())
+            .andExpect(model().attributeHasErrors("owner"))
+            .andExpect(model().attributeHasFieldErrors("owner", "address"))
+            .andExpect(model().attributeHasFieldErrors("owner", "telephone"))
+            .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+    }
 }
