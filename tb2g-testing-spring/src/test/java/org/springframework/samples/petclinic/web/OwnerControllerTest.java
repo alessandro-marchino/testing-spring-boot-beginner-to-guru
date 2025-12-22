@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.web;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -150,6 +149,39 @@ class OwnerControllerTest {
             .andExpect(model().attributeHasErrors("owner"))
             .andExpect(model().attributeHasFieldErrors("owner", "address"))
             .andExpect(model().attributeHasFieldErrors("owner", "telephone"))
-            .andExpect(view().name("owners/createOrUpdateOwnerForm"));
+            .andExpect(view().name(OwnerController.VIEWS_OWNER_CREATE_OR_UPDATE_FORM));
+    }
+    
+    @Test
+    void updateOwnerPostValid() throws Exception {
+        // Given
+        // When
+        mockMvc.perform(post("/owners/{ownerId}/edit", 22)
+            .param("firstName", "Jimmy")
+            .param("lastName", "Buffer")
+            .param("address", "123 Duval St.")
+            .param("city", "Key West")
+            .param("telephone", "1234567890")
+        )
+        // Then
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/owners/22"));
+    }
+
+    @Test
+    void updateOwnerPostNotValid() throws Exception {
+        // Given
+        // When
+        mockMvc.perform(post("/owners/{ownerId}/edit", 22)
+            .param("firstName", "Jimmy")
+            .param("lastName", "Buffer")
+            .param("city", "Key West")
+        )
+        // Then
+            .andExpect(status().isOk())
+            .andExpect(model().attributeHasErrors("owner"))
+            .andExpect(model().attributeHasFieldErrors("owner", "address"))
+            .andExpect(model().attributeHasFieldErrors("owner", "telephone"))
+            .andExpect(view().name(OwnerController.VIEWS_OWNER_CREATE_OR_UPDATE_FORM));
     }
 }
