@@ -1,17 +1,11 @@
 package guru.springframework.brewery.web.model;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+public class BeerOrderPagedList extends PagedModel<BeerOrderDto> {
 
-public class BeerOrderPagedList extends PageImpl<BeerOrderDto> {
-
-    public BeerOrderPagedList(List<BeerOrderDto> content, Pageable pageable, long total) {
-        super(content, pageable, total);
-    }
-
-    public BeerOrderPagedList(List<BeerOrderDto> content) {
+    public BeerOrderPagedList(Page<BeerOrderDto> content) {
         super(content);
     }
 }

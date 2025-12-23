@@ -2,10 +2,8 @@ package guru.springframework.brewery.service;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -41,15 +39,7 @@ public class BeerOrderServiceImpl implements BeerOrderService {
 
         Page<BeerOrder> beerOrderPage = beerOrderRepository.findAllByCustomer(customerOptional.get(), pageable);
 
-        return new BeerOrderPagedList(
-            beerOrderPage
-                .stream()
-                .map(beerOrderMapper::beerOrderToDto)
-                .collect(Collectors.toList()),
-            PageRequest.of(
-                beerOrderPage.getPageable().getPageNumber(),
-                beerOrderPage.getPageable().getPageSize()),
-                beerOrderPage.getTotalElements());
+        return new BeerOrderPagedList(beerOrderPage.map(beerOrderMapper::beerOrderToDto));
     }
 
     @Override

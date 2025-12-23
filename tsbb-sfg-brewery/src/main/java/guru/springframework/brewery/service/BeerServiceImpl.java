@@ -1,7 +1,6 @@
 package guru.springframework.brewery.service;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,17 +38,7 @@ public class BeerServiceImpl implements BeerService {
         } else {
             beerPage = beerRepository.findAll(pageRequest);
         }
-
-        return new BeerPagedList(
-            beerPage
-                .getContent()
-                .stream()
-                .map(beerMapper::beerToBeerDto)
-                .collect(Collectors.toList()),
-            PageRequest.of(
-                beerPage.getPageable().getPageNumber(),
-                beerPage.getPageable().getPageSize()),
-                beerPage.getTotalElements());
+        return new BeerPagedList(beerPage.map(beerMapper::beerToBeerDto));
     }
 
     @Override
