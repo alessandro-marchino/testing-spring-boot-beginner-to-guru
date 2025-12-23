@@ -1,6 +1,7 @@
 package guru.springframework.brewery.web.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,37 +15,33 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import guru.springframework.brewery.service.BeerService;
 import guru.springframework.brewery.web.model.BeerDto;
 import guru.springframework.brewery.web.model.BeerPagedList;
 import guru.springframework.brewery.web.model.BeerStyleEnum;
-import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.cfg.DatatypeFeature;
-import tools.jackson.databind.json.JsonMapper;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(BeerController.class)
 class BeerControllerTest {
-    @Mock BeerService beerService;
-    @InjectMocks BeerController controller;
+    @MockitoBean BeerService beerService;
 
+    @Autowired
     MockMvc mockMvc;
     BeerDto validBeer;
 
@@ -61,9 +58,11 @@ class BeerControllerTest {
             .createdDate(OffsetDateTime.now())
             .lastModifiedDate(OffsetDateTime.now())
             .build();
-        mockMvc = MockMvcBuilders.standaloneSetup(controller)
-            .setMessageConverters(jacksonJsonHttpMessageConverter())
-            .build();
+    }
+
+    @AfterEach
+    void tearDown() {
+        reset(beerService);
     }
 
     @Test
@@ -85,6 +84,7 @@ class BeerControllerTest {
     }
 
     @Nested
+    @ExtendWith(MockitoExtension.class)
     class TestListOperations {
         @Captor ArgumentCaptor<String> beerNameCaptor;
         @Captor ArgumentCaptor<BeerStyleEnum> beerStyleEnumCaptor;
@@ -124,9 +124,4 @@ class BeerControllerTest {
         }
     }
 
-    public JacksonJsonHttpMessageConverter jacksonJsonHttpMessageConverter() {
-        JsonMapper mapper = JsonMapper.builder()
-            .build();
-        return new JacksonJsonHttpMessageConverter(mapper);
-    }
 }
