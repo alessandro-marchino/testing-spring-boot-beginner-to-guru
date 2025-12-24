@@ -1,0 +1,11 @@
+{
+    "request": {
+        "url": "/v1/payors/0a818933-087d-47f2-ad83-2f986ed087eb",
+        "method": "GET"
+    },
+    "response": {
+        "status": 200,
+        "body": "{\"payorId\": \"0a818933-087d-47f2-ad83-2f986ed087eb\"}",
+        "transformers": [ "response-template" ]
+    }
+}
