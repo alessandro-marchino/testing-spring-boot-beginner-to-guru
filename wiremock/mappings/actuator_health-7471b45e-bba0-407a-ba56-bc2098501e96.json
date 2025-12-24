@@ -1,0 +1,22 @@
+{
+  "id" : "7471b45e-bba0-407a-ba56-bc2098501e96",
+  "name" : "actuator_health",
+  "request" : {
+    "url" : "/actuator/health",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"groups\":[\"liveness\",\"readiness\"],\"status\":\"UP\"}",
+    "headers" : {
+      "Keep-Alive" : "timeout=60",
+      "Date" : "Wed, 24 Dec 2025 17:30:29 GMT",
+      "Content-Type" : "application/vnd.spring-boot.actuator.v3+json"
+    }
+  },
+  "uuid" : "7471b45e-bba0-407a-ba56-bc2098501e96",
+  "persistent" : true,
+  "scenarioName" : "scenario-1-actuator-health",
+  "requiredScenarioState" : "scenario-1-actuator-health-2",
+  "insertionIndex" : 5
+}

@@ -1,0 +1,20 @@
+{
+  "id" : "f01abd49-8226-4172-bf45-8f340d371fb6",
+  "name" : "actuator_health_liveness",
+  "request" : {
+    "url" : "/actuator/health/liveness",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"status\":\"UP\"}",
+    "headers" : {
+      "Keep-Alive" : "timeout=60",
+      "Date" : "Wed, 24 Dec 2025 17:30:32 GMT",
+      "Content-Type" : "application/vnd.spring-boot.actuator.v3+json"
+    }
+  },
+  "uuid" : "f01abd49-8226-4172-bf45-8f340d371fb6",
+  "persistent" : true,
+  "insertionIndex" : 4
+}

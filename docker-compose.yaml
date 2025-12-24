@@ -7,6 +7,6 @@ services:
       - 8080:8080
     volumes:
 #      - ./extensions:/var/wiremock/extensions
-#      - ./__files:/home/wiremock/__files
+      - ./wiremock/__files:/home/wiremock/__files
       - ./wiremock/mappings:/home/wiremock/mappings
     entrypoint: ["/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose"]
