@@ -16,4 +16,8 @@ public class BeerOrderStatusChangeEvent extends ApplicationEvent {
         this.previousState = previousStatus;
     }
 
+    public BeerOrder getBeerOrder() {
+        return (BeerOrder) source;
+    }
+
 }
