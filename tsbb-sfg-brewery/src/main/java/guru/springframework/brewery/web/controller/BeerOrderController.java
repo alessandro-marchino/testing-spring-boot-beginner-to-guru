@@ -52,13 +52,13 @@ public class BeerOrderController {
     }
 
     @GetMapping("orders/{orderId}")
-    public BeerOrderDto getOrder(@PathVariable UUID customerId, @PathVariable("orderId") UUID orderId){
+    public BeerOrderDto getOrder(@PathVariable UUID customerId, @PathVariable UUID orderId){
         return beerOrderService.getOrderById(customerId, orderId);
     }
 
     @PutMapping("/orders/{orderId}/pickup")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void pickupOrder(@PathVariable UUID customerId, @PathVariable("orderId") UUID orderId){
+    public void pickupOrder(@PathVariable UUID customerId, @PathVariable UUID orderId){
         beerOrderService.pickupOrder(customerId, orderId);
     }
 }
