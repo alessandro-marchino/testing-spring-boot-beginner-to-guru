@@ -80,7 +80,20 @@ class BeerControllerTest {
         mockMvc.perform(post("/api/v1/beer")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(beerDtoJson))
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated())
+            .andDo(document("v1/beer",
+                requestFields(
+                    fieldWithPath("id").ignored(),
+                    fieldWithPath("version").ignored(),
+                    fieldWithPath("createdDate").ignored(),
+                    fieldWithPath("lastModifiedDate").ignored(),
+                    fieldWithPath("beerName").description("Beer name"),
+                    fieldWithPath("beerStyle").description("Beer Stule"),
+                    fieldWithPath("upc").description("UPC of beer"),
+                    fieldWithPath("price").description("Price"),
+                    fieldWithPath("quantityOnHand").ignored()
+                )
+            ));
     }
 
     @Test
