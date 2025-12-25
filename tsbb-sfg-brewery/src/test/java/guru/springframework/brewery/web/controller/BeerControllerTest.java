@@ -4,7 +4,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,10 +27,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.restdocs.test.autoconfigure.AutoConfigureRestDocs;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -37,6 +42,8 @@ import guru.springframework.brewery.web.model.BeerDto;
 import guru.springframework.brewery.web.model.BeerPagedList;
 import guru.springframework.brewery.web.model.BeerStyleEnum;
 
+@ExtendWith(RestDocumentationExtension.class)
+@AutoConfigureRestDocs
 @WebMvcTest(BeerController.class)
 class BeerControllerTest {
     @MockitoBean BeerService beerService;
@@ -78,6 +85,22 @@ class BeerControllerTest {
             .andExpect(jsonPath("$.id", is(validBeer.getId().toString())))
             .andExpect(jsonPath("$.beerName", is("Beer1")))
             .andExpect(jsonPath("$.createdDate", is(dateTimeFormatter.format(validBeer.getCreatedDate()))))
+            .andDo(document("GET v1/beer/_beerId",
+                pathParameters(
+                    parameterWithName("beerId").description("UUID of beer")
+                ),
+                responseFields(
+                    fieldWithPath("id").description("Id of the order"),
+                    fieldWithPath("version").description("Version number"),
+                    fieldWithPath("createdDate").description("Creation date"),
+                    fieldWithPath("lastModifiedDate").description("Update date"),
+                    fieldWithPath("beerName").description("Name of the beer"),
+                    fieldWithPath("beerStyle").description("Beer style"),
+                    fieldWithPath("upc").description("Beer UPC"),
+                    fieldWithPath("quantityOnHand").description("Quantity on hand"),
+                    fieldWithPath("price").description("price")
+                )
+            ))
             .andReturn();
         System.out.println(result.getResponse().getContentAsString());
 
@@ -96,6 +119,7 @@ class BeerControllerTest {
             List<BeerDto> beers = List.of(
                 validBeer,
                 BeerDto.builder()
+                    .id(UUID.randomUUID())
                     .version(1)
                     .beerName("Beer4")
                     .upc(123123123122L)
@@ -121,6 +145,29 @@ class BeerControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content[0].id", is(validBeer.getId().toString())))
+                .andDo(document("GET v1/beer",
+                    queryParameters(
+                        parameterWithName("pageNumber").optional().description("Page number"),
+                        parameterWithName("pageSize").optional().description("Page size"),
+                        parameterWithName("beerStyle").optional().description("Beer style")
+                    ),
+                    responseFields(
+                        fieldWithPath("content[].id").description("Id of the beer"),
+                        fieldWithPath("content[].version").description("Version number"),
+                        fieldWithPath("content[].createdDate").description("Creation date"),
+                        fieldWithPath("content[].lastModifiedDate").description("Update date"),
+                        fieldWithPath("content[].beerName").description("Name of the beer"),
+                        fieldWithPath("content[].beerStyle").description("Beer style"),
+                        fieldWithPath("content[].upc").description("Beer UPC"),
+                        fieldWithPath("content[].quantityOnHand").description("Quantity on hand"),
+                        fieldWithPath("content[].price").description("price"),
+
+                        fieldWithPath("page.size").description("Size of the page"),
+                        fieldWithPath("page.number").description("Number of the page"),
+                        fieldWithPath("page.totalElements").description("Total elements"),
+                        fieldWithPath("page.totalPages").description("Total pages")
+                    )
+                ))
                 .andReturn();
             System.out.println(result.getResponse().getContentAsString());
         }

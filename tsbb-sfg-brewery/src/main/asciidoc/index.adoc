@@ -1,0 +1,130 @@
+= SFG Brewery Order Service Docs
+John Thompson;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+
+Sample application demonstrating how to use Spring REST Docs with JUnit 5.
+
+`BeerOrderControllerTest` makes a call to a very simple service and produces three
+documentation snippets.
+
+GET BEER BY ID
+
+One showing how to make a request using cURL:
+
+include::{snippets}/GET v1/beer/_beerId/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/GET v1/beer/_beerId/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/GET v1/beer/_beerId/http-response.adoc[]
+
+Response Body:
+include::{snippets}/GET v1/beer/_beerId/response-body.adoc[]
+
+Response Fields:
+include::{snippets}/GET v1/beer/_beerId/response-fields.adoc[]
+
+GET BEERS
+
+One showing how to make a request using cURL:
+
+include::{snippets}/GET v1/beer/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/GET v1/beer/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/GET v1/beer/http-response.adoc[]
+
+Response Body:
+include::{snippets}/GET v1/beer/response-body.adoc[]
+
+Response Fields:
+include::{snippets}/GET v1/beer/response-fields.adoc[]
+
+GET ORDER BY ID
+
+One showing how to make a request using cURL:
+
+include::{snippets}/GET v1/customers/_customerId/orders/_orderId/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/GET v1/customers/_customerId/orders/_orderId/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/GET v1/customers/_customerId/orders/_orderId/http-response.adoc[]
+
+Response Body:
+include::{snippets}/GET v1/customers/_customerId/orders/_orderId/response-body.adoc[]
+
+Response Fields:
+include::{snippets}/GET v1/customers/_customerId/orders/_orderId/response-fields.adoc[]
+
+GET ORDERS
+
+One showing how to make a request using cURL:
+
+include::{snippets}/GET v1/customers/_customerId/orders/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/GET v1/customers/_customerId/orders/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/GET v1/customers/_customerId/orders/http-response.adoc[]
+
+Response Body:
+include::{snippets}/GET v1/customers/_customerId/orders/response-body.adoc[]
+
+Response Fields:
+include::{snippets}/GET v1/customers/_customerId/orders/response-fields.adoc[]
+
+PICKUP ORDER
+
+One showing how to make a request using cURL:
+
+include::{snippets}/PUT v1/customers/_customerId/orders/_orderId/pickup/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/PUT v1/customers/_customerId/orders/_orderId/pickup/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/PUT v1/customers/_customerId/orders/_orderId/pickup/http-response.adoc[]
+
+Response Body:
+include::{snippets}/PUT v1/customers/_customerId/orders/_orderId/pickup/response-body.adoc[]
+
+NEW ORDER
+
+One showing how to make a request using cURL:
+
+include::{snippets}/POST v1/customers/_customerId/orders/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/POST v1/customers/_customerId/orders/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/POST v1/customers/_customerId/orders/http-response.adoc[]
+
+Response Body:
+include::{snippets}/POST v1/customers/_customerId/orders/response-body.adoc[]
+
+Request Fields
+include::{snippets}/POST v1/customers/_customerId/orders/request-fields.adoc[]
+
+Response Fields:
+include::{snippets}/POST v1/customers/_customerId/orders/response-fields.adoc[]

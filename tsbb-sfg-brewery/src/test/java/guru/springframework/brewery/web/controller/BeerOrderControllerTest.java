@@ -7,9 +7,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,11 +29,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.restdocs.test.autoconfigure.AutoConfigureRestDocs;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -42,7 +45,9 @@ import guru.springframework.brewery.web.model.BeerOrderDto;
 import guru.springframework.brewery.web.model.BeerOrderPagedList;
 import tools.jackson.databind.json.JsonMapper;
 
+@ExtendWith(RestDocumentationExtension.class)
 @WebMvcTest(BeerOrderController.class)
+@AutoConfigureRestDocs
 public class BeerOrderControllerTest {
     @MockitoBean BeerOrderService service;
     @Autowired MockMvc mockMvc;
@@ -70,7 +75,24 @@ public class BeerOrderControllerTest {
         // Then
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.id", is(orderId.toString())));
+            .andExpect(jsonPath("$.id", is(orderId.toString())))
+            .andDo(document("GET v1/customers/_customerId/orders/_orderId",
+                pathParameters(
+                    parameterWithName("customerId").description("UUID of customer"),
+                    parameterWithName("orderId").description("UUID of the order")
+                ),
+                responseFields(
+                    fieldWithPath("id").description("Id of the order"),
+                    fieldWithPath("version").description("Version number"),
+                    fieldWithPath("createdDate").description("Creation date"),
+                    fieldWithPath("lastModifiedDate").description("Update date"),
+                    fieldWithPath("customerId").description("Id of the customer"),
+                    fieldWithPath("beerOrderLines").description("Beer order lines"),
+                    fieldWithPath("orderStatus").description("Order status"),
+                    fieldWithPath("orderStatusCallbackUrl").description("ORder callback URL"),
+                    fieldWithPath("customerRef").description("customer reference")
+                )
+            ));
     }
 
     @Nested
@@ -94,7 +116,32 @@ public class BeerOrderControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content[0].id", is(order1.getId().toString())))
-                .andExpect(jsonPath("$.content[0].version", is(1)));
+                .andExpect(jsonPath("$.content[0].version", is(1)))
+                .andDo(document("GET v1/customers/_customerId/orders",
+                    pathParameters(
+                        parameterWithName("customerId").description("UUID of customer")
+                    ),
+                    queryParameters(
+                        parameterWithName("pageNumber").optional().description("Page number"),
+                        parameterWithName("pageSize").optional().description("Page size")
+                    ),
+                    responseFields(
+                        fieldWithPath("content[].id").description("Id of the order"),
+                        fieldWithPath("content[].version").description("Version number"),
+                        fieldWithPath("content[].createdDate").description("Creation date"),
+                        fieldWithPath("content[].lastModifiedDate").description("Update date"),
+                        fieldWithPath("content[].customerId").description("Id of the customer"),
+                        fieldWithPath("content[].beerOrderLines").description("Beer order lines"),
+                        fieldWithPath("content[].orderStatus").description("Order status"),
+                        fieldWithPath("content[].orderStatusCallbackUrl").description("ORder callback URL"),
+                        fieldWithPath("content[].customerRef").description("customer reference"),
+
+                        fieldWithPath("page.size").description("Size of the page"),
+                        fieldWithPath("page.number").description("Number of the page"),
+                        fieldWithPath("page.totalElements").description("Total elements"),
+                        fieldWithPath("page.totalPages").description("Total pages")
+                    )
+                ));
             assertThat(pageableCaptor.getValue().getPageNumber()).isEqualTo(1);
             assertThat(pageableCaptor.getValue().getPageSize()).isEqualTo(1);
         }
@@ -138,7 +185,13 @@ public class BeerOrderControllerTest {
         // When
         mockMvc.perform(put("/api/v1/customers/{customerId}/orders/{orderId}/pickup", customerId, orderId))
         // Then
-            .andExpect(status().isNoContent());
+            .andExpect(status().isNoContent())
+            .andDo(document("PUT v1/customers/_customerId/orders/_orderId/pickup",
+                pathParameters(
+                    parameterWithName("customerId").description("UUID of customer"),
+                    parameterWithName("orderId").description("UUID of order")
+                )
+            ));
     }
 
     @Test
@@ -158,7 +211,28 @@ public class BeerOrderControllerTest {
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id", is(order.getId().toString())))
-            .andExpect(jsonPath("$.version", is(order.getVersion())));
+            .andExpect(jsonPath("$.version", is(order.getVersion())))
+            .andDo(document("POST v1/customers/_customerId/orders",
+                pathParameters(
+                    parameterWithName("customerId").description("UUID of customer")
+                ),
+                requestFields(
+                    fieldWithPath("version").description("Version number"),
+                    fieldWithPath("customerId").description("UUID of customer"),
+                    fieldWithPath("orderStatus").description("Order status")
+                ),
+                responseFields(
+                    fieldWithPath("id").description("Id of the order"),
+                    fieldWithPath("version").description("Version number"),
+                    fieldWithPath("createdDate").description("Creation date"),
+                    fieldWithPath("lastModifiedDate").description("Update date"),
+                    fieldWithPath("customerId").description("Id of the customer"),
+                    fieldWithPath("beerOrderLines").description("Beer order lines"),
+                    fieldWithPath("orderStatus").description("Order status"),
+                    fieldWithPath("orderStatusCallbackUrl").description("ORder callback URL"),
+                    fieldWithPath("customerRef").description("customer reference")
+                )
+            ));
     }
 
     private String toJson(Object obj) {
