@@ -133,7 +133,7 @@
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${spring-restdocs.version}</version>
                 <executions>
                     <execution>
                         <id>generate-docs</id>
